@@ -32,23 +32,65 @@ public class Silvermoon {
                 handleMark(input);
             } else if (input.startsWith("unmark ")) {
                 handleUnmark(input);
+            } else if (input.startsWith("todo ")) {
+                String desc = input.substring(5).trim();
+                if (desc.isEmpty()) {
+                    errorBox("Description for todo cannot be empty.");
+                } else {
+                    addAndAcknowledge(new ToDo(desc));
+                }
+            } else if (input.startsWith("deadline ")) {
+                handleDeadline(input.substring(9).trim());
+            } else if (input.startsWith("event ")) {
+                handleEvent(input.substring(6).trim());
             } else if (!input.isEmpty()) {
-                addTask(input);
+                addAndAcknowledge(new ToDo(input));
             }
-            // ignore empty lines
         }
     }
 
-    private static void addTask(String description) {
-        if (size >= MAX_TASKS) {
-            System.out.println(LINE);
-            System.out.println(" Sorry, I can only remember up to " + MAX_TASKS + " tasks.");
-            System.out.println(LINE);
+    private static void handleDeadline(String rest) {
+        int p = rest.indexOf("/by");
+        if (p < 0) {
+            errorBox("Usage: deadline <description> /by <when>");
             return;
         }
-        tasks[size++] = new Task(description);
+        String desc = rest.substring(0, p).trim();
+        String by = rest.substring(p + 3).trim(); // after "/by"
+        if (desc.isEmpty() || by.isEmpty()) {
+            errorBox("Usage: deadline <description> /by <when>");
+            return;
+        }
+        addAndAcknowledge(new Deadline(desc, by));
+    }
+
+    private static void handleEvent(String rest) {
+        int pf = rest.indexOf("/from");
+        int pt = rest.indexOf("/to");
+        if (pf < 0 || pt < 0 || pt < pf) {
+            errorBox("Usage: event <description> /from <start> /to <end>");
+            return;
+        }
+        String desc = rest.substring(0, pf).trim();
+        String from = rest.substring(pf + 5, pt).trim(); // between "/from" and "/to"
+        String to = rest.substring(pt + 3).trim();       // after "/to"
+        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            errorBox("Usage: event <description> /from <start> /to <end>");
+            return;
+        }
+        addAndAcknowledge(new Event(desc, from, to));
+    }
+
+    private static void addAndAcknowledge(Task t) {
+        if (size >= MAX_TASKS) {
+            errorBox("Sorry, I can only remember up to " + MAX_TASKS + " tasks.");
+            return;
+        }
+        tasks[size++] = t;
         System.out.println(LINE);
-        System.out.println(" added: " + description);
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + t);
+        System.out.println(" Now you have " + size + " task" + (size == 1 ? "" : "s") + " in the list.");
         System.out.println(LINE);
     }
 
@@ -115,6 +157,5 @@ public class Silvermoon {
         System.out.println(LINE);
     }
 }
-
 
 
