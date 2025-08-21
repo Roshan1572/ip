@@ -26,65 +26,118 @@ public class Silvermoon {
             if (input.equals("bye")) {
                 exit();
                 break;
-            } else if (input.equals("list")) {
-                listTasks();
-            } else if (input.startsWith("mark ")) {
-                handleMark(input);
-            } else if (input.startsWith("unmark ")) {
-                handleUnmark(input);
-            } else if (input.startsWith("todo ")) {
-                String desc = input.substring(5).trim();
-                if (desc.isEmpty()) {
-                    errorBox("Description for todo cannot be empty.");
-                } else {
-                    addAndAcknowledge(new ToDo(desc));
-                }
-            } else if (input.startsWith("deadline ")) {
-                handleDeadline(input.substring(9).trim());
-            } else if (input.startsWith("event ")) {
-                handleEvent(input.substring(6).trim());
-            } else if (!input.isEmpty()) {
-                addAndAcknowledge(new ToDo(input));
+            }
+            if (input.isEmpty()) {
+                continue;
+            }
+            try {
+                process(input);
+            } catch (SilvermoonException e) {
+                errorBox(e.getMessage());
             }
         }
     }
 
-    private static void handleDeadline(String rest) {
-        int p = rest.indexOf("/by");
-        if (p < 0) {
-            errorBox("Usage: deadline <description> /by <when>");
+    private static void process(String input) throws SilvermoonException {
+        if (input.equals("list")) {
+            listTasks();
             return;
         }
-        String desc = rest.substring(0, p).trim();
-        String by = rest.substring(p + 3).trim(); // after "/by"
-        if (desc.isEmpty() || by.isEmpty()) {
-            errorBox("Usage: deadline <description> /by <when>");
+        if (input.startsWith("mark ")) {
+            handleMark(input);
             return;
+        }
+        if (input.startsWith("unmark ")) {
+            handleUnmark(input);
+            return;
+        }
+        if (input.startsWith("todo")) {
+            String rest = input.length() >= 4 ? input.substring(4).trim() : "";
+            if (rest.isEmpty()) {
+                throw new SilvermoonException("Oops! The description of a todo cannot be empty.");
+            }
+            addAndAcknowledge(new ToDo(rest));
+            return;
+        }
+        if (input.startsWith("deadline")) {
+            handleDeadline(input.substring(8).trim());
+            return;
+        }
+        if (input.startsWith("event")) {
+            handleEvent(input.substring(5).trim());
+            return;
+        }
+        // Unknown command
+        throw new SilvermoonException("Sorry, I don't recognize that command.");
+    }
+
+    private static void handleDeadline(String rest) throws SilvermoonException {
+        int p = rest.indexOf("/by");
+        if (p < 0) {
+            throw new SilvermoonException("Usage: deadline <description> /by <when>");
+        }
+        String desc = rest.substring(0, p).trim();
+        String by = rest.substring(p + 3).trim();
+        if (desc.isEmpty() || by.isEmpty()) {
+            throw new SilvermoonException("Usage: deadline <description> /by <when>");
         }
         addAndAcknowledge(new Deadline(desc, by));
     }
 
-    private static void handleEvent(String rest) {
+    private static void handleEvent(String rest) throws SilvermoonException {
         int pf = rest.indexOf("/from");
         int pt = rest.indexOf("/to");
         if (pf < 0 || pt < 0 || pt < pf) {
-            errorBox("Usage: event <description> /from <start> /to <end>");
-            return;
+            throw new SilvermoonException("Usage: event <description> /from <start> /to <end>");
         }
         String desc = rest.substring(0, pf).trim();
-        String from = rest.substring(pf + 5, pt).trim(); // between "/from" and "/to"
-        String to = rest.substring(pt + 3).trim();       // after "/to"
+        String from = rest.substring(pf + 5, pt).trim();
+        String to = rest.substring(pt + 3).trim();
         if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            errorBox("Usage: event <description> /from <start> /to <end>");
-            return;
+            throw new SilvermoonException("Usage: event <description> /from <start> /to <end>");
         }
         addAndAcknowledge(new Event(desc, from, to));
     }
 
-    private static void addAndAcknowledge(Task t) {
+    private static void handleMark(String input) throws SilvermoonException {
+        int idx = parseIndex(input, "mark");
+        tasks[idx].markAsDone();
+        System.out.println(LINE);
+        System.out.println(" Nice! I've marked this task as done:");
+        System.out.println("   " + tasks[idx]);
+        System.out.println(LINE);
+    }
+
+    private static void handleUnmark(String input) throws SilvermoonException {
+        int idx = parseIndex(input, "unmark");
+        tasks[idx].markAsUndone();
+        System.out.println(LINE);
+        System.out.println(" OK, I've marked this task as not done yet:");
+        System.out.println("   " + tasks[idx]);
+        System.out.println(LINE);
+    }
+
+    private static int parseIndex(String input, String cmd) throws SilvermoonException {
+        String[] parts = input.split("\\s+");
+        if (parts.length != 2) {
+            throw new SilvermoonException("Usage: " + cmd + " <taskNumber>");
+        }
+        int oneBased;
+        try {
+            oneBased = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new SilvermoonException("Task number must be an integer.");
+        }
+        int idx = oneBased - 1;
+        if (idx < 0 || idx >= size) {
+            throw new SilvermoonException("Task number must be between 1 and " + size + ".");
+        }
+        return idx;
+    }
+
+    private static void addAndAcknowledge(Task t) throws SilvermoonException {
         if (size >= MAX_TASKS) {
-            errorBox("Sorry, I can only remember up to " + MAX_TASKS + " tasks.");
-            return;
+            throw new SilvermoonException("Sorry, I can only remember up to " + MAX_TASKS + " tasks.");
         }
         tasks[size++] = t;
         System.out.println(LINE);
@@ -101,48 +154,6 @@ public class Silvermoon {
             System.out.println(" " + (i + 1) + ". " + tasks[i]);
         }
         System.out.println(LINE);
-    }
-
-    private static void handleMark(String input) {
-        Integer idx = parseIndex(input, "mark");
-        if (idx == null) return;
-        Task t = tasks[idx];
-        t.markAsDone();
-        System.out.println(LINE);
-        System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + t);
-        System.out.println(LINE);
-    }
-
-    private static void handleUnmark(String input) {
-        Integer idx = parseIndex(input, "unmark");
-        if (idx == null) return;
-        Task t = tasks[idx];
-        t.markAsUndone();
-        System.out.println(LINE);
-        System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + t);
-        System.out.println(LINE);
-    }
-
-    private static Integer parseIndex(String input, String cmd) {
-        String[] parts = input.split("\\s+");
-        if (parts.length != 2) {
-            errorBox("Usage: " + cmd + " <taskNumber>");
-            return null;
-        }
-        try {
-            int oneBased = Integer.parseInt(parts[1]);
-            int idx = oneBased - 1;
-            if (idx < 0 || idx >= size) {
-                errorBox("Task number must be between 1 and " + size + ".");
-                return null;
-            }
-            return idx;
-        } catch (NumberFormatException e) {
-            errorBox("Task number must be an integer.");
-            return null;
-        }
     }
 
     private static void errorBox(String msg) {
