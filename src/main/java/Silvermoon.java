@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Silvermoon {
     private static final String NAME = "Silvermoon";
@@ -81,11 +83,17 @@ public class Silvermoon {
 
     private static void handleDeadline(String rest) throws SilvermoonException {
         int p = rest.indexOf("/by");
-        if (p < 0) throw new SilvermoonException("Usage: deadline <description> /by <when>");
+        if (p < 0) throw new SilvermoonException("Usage: deadline <description> /by <yyyy-MM-dd>");
         String desc = rest.substring(0, p).trim();
-        String by = rest.substring(p + 3).trim();
-        if (desc.isEmpty() || by.isEmpty()) throw new SilvermoonException("Usage: deadline <description> /by <when>");
-        addAndAcknowledge(new Deadline(desc, by));
+        String byRaw = rest.substring(p + 3).trim();
+        if (desc.isEmpty() || byRaw.isEmpty())
+            throw new SilvermoonException("Usage: deadline <description> /by <yyyy-MM-dd>");
+        try {
+            LocalDate byDate = LocalDate.parse(byRaw); // expects yyyy-MM-dd
+            addAndAcknowledge(new Deadline(desc, byDate));
+        } catch (DateTimeParseException e) {
+            throw new SilvermoonException("Please use date format yyyy-MM-dd (e.g., 2019-10-15).");
+        }
     }
 
     private static void handleEvent(String rest) throws SilvermoonException {

@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 public class Storage {
     private final Path dataDir;
@@ -63,8 +64,9 @@ public class Storage {
                 t = new ToDo(desc);
                 break;
             case "D":
-                String by = parts.length >= 4 ? parts[3] : "";
-                t = new Deadline(desc, by);
+                String byIso = parts.length >= 4 ? parts[3] : "";
+                LocalDate byDate = byIso.isEmpty() ? LocalDate.now() : LocalDate.parse(byIso);
+                t = new Deadline(desc, byDate);
                 break;
             case "E":
                 String from = parts.length >= 4 ? parts[3] : "";
@@ -84,7 +86,7 @@ public class Storage {
             return String.join(" | ", "T", done, t.description);
         } else if (t instanceof Deadline) {
             Deadline d = (Deadline) t;
-            return String.join(" | ", "D", done, d.description, d.by);
+            return String.join(" | ", "D", done, d.description, d.getBy().toString()); // yyyy-MM-dd
         } else if (t instanceof Event) {
             Event e = (Event) t;
             return String.join(" | ", "E", done, e.description, e.from, e.to);
