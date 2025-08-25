@@ -1,3 +1,5 @@
+package silvermoon;
+
 import java.util.List;
 
 public class Ui {
