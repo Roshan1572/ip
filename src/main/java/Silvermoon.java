@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,10 +8,28 @@ public class Silvermoon {
     private static final String LINE = "____________________________________________________________";
 
     private static final List<Task> tasks = new ArrayList<>();
+    private static final Storage storage = new Storage("silvermoon.txt");
 
     public static void main(String[] args) {
+        loadOnStart();
         greet();
         run();
+    }
+
+    private static void loadOnStart() {
+        try {
+            tasks.addAll(storage.load());
+        } catch (IOException e) {
+            errorBox("Couldn't load saved tasks. I'll start fresh.");
+        }
+    }
+
+    private static void saveNow() {
+        try {
+            storage.save(tasks);
+        } catch (IOException e) {
+            errorBox("I couldn't save your tasks just now. Changes are only in memory.");
+        }
     }
 
     private static void greet() {
@@ -28,9 +47,7 @@ public class Silvermoon {
                 exit();
                 break;
             }
-            if (input.isEmpty()) {
-                continue; // ignore empty lines
-            }
+            if (input.isEmpty()) continue;
             try {
                 process(input);
             } catch (SilvermoonException e) {
@@ -86,6 +103,7 @@ public class Silvermoon {
     private static void handleMark(String input) throws SilvermoonException {
         int idx = parseIndex(input, "mark");
         tasks.get(idx).markAsDone();
+        saveNow();
         System.out.println(LINE);
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + tasks.get(idx));
@@ -95,6 +113,7 @@ public class Silvermoon {
     private static void handleUnmark(String input) throws SilvermoonException {
         int idx = parseIndex(input, "unmark");
         tasks.get(idx).markAsUndone();
+        saveNow();
         System.out.println(LINE);
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + tasks.get(idx));
@@ -104,6 +123,7 @@ public class Silvermoon {
     private static void handleDelete(String input) throws SilvermoonException {
         int idx = parseIndex(input, "delete");
         Task removed = tasks.remove(idx);
+        saveNow();
         System.out.println(LINE);
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + removed);
@@ -113,6 +133,7 @@ public class Silvermoon {
 
     private static void addAndAcknowledge(Task t) {
         tasks.add(t);
+        saveNow();
         System.out.println(LINE);
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + t);
@@ -153,6 +174,5 @@ public class Silvermoon {
         System.out.println(LINE);
     }
 }
-
 
 
