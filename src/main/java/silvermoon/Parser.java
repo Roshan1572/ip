@@ -97,6 +97,21 @@ public class Parser {
             ui.showTaskAdded(t, taskList.size());
             return false;
         }
+        if (trimmed.startsWith("find")) {
+            String keyword = trimmed.length() > 4 ? trimmed.substring(4).trim() : "";
+            if (keyword.isEmpty()) {
+                throw new SilvermoonException("Usage: find <keyword>");
+            }
+            String needle = keyword.toLowerCase();
+            java.util.List<Task> matches = new java.util.ArrayList<>();
+            for (Task t : taskList.asList()) {
+                if (t.getDescription().toLowerCase().contains(needle)) {
+                    matches.add(t);
+                }
+            }
+            ui.showMatchingTasks(matches);
+            return false;
+        }
 
         throw new SilvermoonException("Sorry, I don't recognize that command.");
     }
