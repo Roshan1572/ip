@@ -3,8 +3,21 @@ package silvermoon;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Parses user input strings and executes actions based on it.
+ */
 public class Parser {
 
+    /**
+     * Parses and executes a single user input.
+     *
+     * @param input    raw line from the user
+     * @param taskList list to operate on
+     * @param ui       UI for user-visible output
+     * @param storage  storage for changes
+     * @return {@code true} if the caller exit; {@code false} otherwise
+     * @throws SilvermoonException if command is recognised but incorrect
+     */
     public static boolean parseAndExecute(String input, TaskList taskList, Ui ui, Storage storage)
             throws SilvermoonException {
         String trimmed = input.trim();
@@ -88,6 +101,15 @@ public class Parser {
         throw new SilvermoonException("Sorry, I don't recognize that command.");
     }
 
+    /**
+     * Parses a 1-based task index from a command like {@code "mark 2"}.
+     *
+     * @param input full command line
+     * @param cmd   command name for error messages
+     * @param size  current number of tasks
+     * @return zero-based index into the task list
+     * @throws SilvermoonException if the index is missing, non-integer, or out of range
+     */
     private static int parseIndex(String input, String cmd, int size) throws SilvermoonException {
         String[] parts = input.split("\\s+");
         if (parts.length != 2) throw new SilvermoonException("Usage: " + cmd + " <taskNumber>");

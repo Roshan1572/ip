@@ -2,6 +2,7 @@ package silvermoon;
 
 import java.util.List;
 
+/** Deals with user-facing output. */
 public class Ui {
     private static final String LINE = "____________________________________________________________";
 

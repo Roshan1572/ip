@@ -3,6 +3,9 @@ package silvermoon;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * Main entry point of the application.
+ */
 public class Silvermoon {
     private static final String NAME = "Silvermoon";
 
@@ -21,6 +24,7 @@ public class Silvermoon {
         }
     }
 
+    /** Starts the interactive loop until the user exits. */
     public void run() {
         ui.showGreeting(NAME);
         Scanner sc = new Scanner(System.in);
