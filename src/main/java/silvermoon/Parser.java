@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 /**
- * Parses user input strings and executes actions based on it.
+ * Parses user input strings and executes the corresponding actions.
  */
-public class Parser {
+public final class Parser {
+
+    /** Prevents instantiation of utility class. */
+    private Parser() {}
 
     /**
      * Parses and executes a single user input.
@@ -14,14 +17,16 @@ public class Parser {
      * @param input    raw line from the user
      * @param taskList list to operate on
      * @param ui       UI for user-visible output
-     * @param storage  storage for changes
-     * @return {@code true} if the caller exit; {@code false} otherwise
-     * @throws SilvermoonException if command is recognised but incorrect
+     * @param storage  persistence for changes
+     * @return {@code true} if the caller should exit; {@code false} otherwise
+     * @throws SilvermoonException if the command is recognised but malformed
      */
     public static boolean parseAndExecute(String input, TaskList taskList, Ui ui, Storage storage)
             throws SilvermoonException {
         String trimmed = input.trim();
-        if (trimmed.isEmpty()) return false;
+        if (trimmed.isEmpty()) {
+            return false;
+        }
 
         if (trimmed.equals("bye")) {
             ui.showExit();
@@ -54,8 +59,10 @@ public class Parser {
         }
         if (trimmed.startsWith("todo")) {
             String rest = trimmed.length() >= 4 ? trimmed.substring(4).trim() : "";
-            if (rest.isEmpty()) throw new SilvermoonException("The description of a todo cannot be empty.");
-            Task t = new ToDo(rest);
+            if (rest.isEmpty()) {
+                throw new SilvermoonException("The description of a todo cannot be empty.");
+            }
+            Task t = new ToDo(rest); // <- fixed name
             taskList.add(t);
             storageSafeSave(storage, taskList, ui);
             ui.showTaskAdded(t, taskList.size());
@@ -63,12 +70,15 @@ public class Parser {
         }
         if (trimmed.startsWith("deadline")) {
             String rest = trimmed.substring(8).trim();
-            int p = rest.indexOf("/by");
-            if (p < 0) throw new SilvermoonException("Usage: deadline <description> /by <yyyy-MM-dd>");
-            String desc = rest.substring(0, p).trim();
-            String byRaw = rest.substring(p + 3).trim();
-            if (desc.isEmpty() || byRaw.isEmpty())
+            int byPos = rest.indexOf("/by");
+            if (byPos < 0) {
                 throw new SilvermoonException("Usage: deadline <description> /by <yyyy-MM-dd>");
+            }
+            String desc = rest.substring(0, byPos).trim();
+            String byRaw = rest.substring(byPos + 3).trim();
+            if (desc.isEmpty() || byRaw.isEmpty()) {
+                throw new SilvermoonException("Usage: deadline <description> /by <yyyy-MM-dd>");
+            }
             try {
                 LocalDate byDate = LocalDate.parse(byRaw); // yyyy-MM-dd
                 Task t = new Deadline(desc, byDate);
@@ -82,15 +92,17 @@ public class Parser {
         }
         if (trimmed.startsWith("event")) {
             String rest = trimmed.substring(5).trim();
-            int pf = rest.indexOf("/from");
-            int pt = rest.indexOf("/to");
-            if (pf < 0 || pt < 0 || pt < pf)
+            int fromPos = rest.indexOf("/from");
+            int toPos = rest.indexOf("/to");
+            if (fromPos < 0 || toPos < 0 || toPos < fromPos) {
                 throw new SilvermoonException("Usage: event <description> /from <start> /to <end>");
-            String desc = rest.substring(0, pf).trim();
-            String from = rest.substring(pf + 5, pt).trim();
-            String to = rest.substring(pt + 3).trim();
-            if (desc.isEmpty() || from.isEmpty() || to.isEmpty())
+            }
+            String desc = rest.substring(0, fromPos).trim();
+            String from = rest.substring(fromPos + 5, toPos).trim();
+            String to = rest.substring(toPos + 3).trim();
+            if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
                 throw new SilvermoonException("Usage: event <description> /from <start> /to <end>");
+            }
             Task t = new Event(desc, from, to);
             taskList.add(t);
             storageSafeSave(storage, taskList, ui);
@@ -127,16 +139,27 @@ public class Parser {
      */
     private static int parseIndex(String input, String cmd, int size) throws SilvermoonException {
         String[] parts = input.split("\\s+");
-        if (parts.length != 2) throw new SilvermoonException("Usage: " + cmd + " <taskNumber>");
+        if (parts.length != 2) {
+            throw new SilvermoonException("Usage: " + cmd + " <taskNumber>");
+        }
         int oneBased;
-        try { oneBased = Integer.parseInt(parts[1]); }
-        catch (NumberFormatException e) { throw new SilvermoonException("Task number must be an integer."); }
+        try {
+            oneBased = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new SilvermoonException("Task number must be an integer.");
+        }
         int idx = oneBased - 1;
-        if (idx < 0 || idx >= size)
+        if (idx < 0 || idx >= size) {
             throw new SilvermoonException("Task number must be between 1 and " + size + ".");
+        }
         return idx;
     }
 
+    /**
+     * Saves the current task list; reports an error via {@link Ui} if saving fails.
+     *
+     * <p>Failures are surfaced to the user rather than thrown to the caller.</p>
+     */
     private static void storageSafeSave(Storage storage, TaskList taskList, Ui ui) {
         try {
             storage.save(taskList.asList());
@@ -145,3 +168,4 @@ public class Parser {
         }
     }
 }
+
