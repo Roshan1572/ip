@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 
+/**
+ * Sends tasks to {@code ./data/<fileName>} and loads them back on startup.
+ * Creates the {@code data/} directory and file on first use if missing.
+ */
 public class Storage {
     private final Path dataDir;
     private final Path dataFile;
@@ -22,7 +26,7 @@ public class Storage {
         this.dataDir = base.resolve("data");
         this.dataFile = dataDir.resolve(fileName);
     }
-
+    /** Loads tasks from disk; returns an empty list if the file does not exist. */
     public List<Task> load() throws IOException {
         if (!Files.exists(dataFile)) {
             // First run: ensure folder exists, but return empty list
@@ -40,6 +44,7 @@ public class Storage {
         return tasks;
     }
 
+    /** Overwrites the file with the given tasks. */
     public void save(List<Task> tasks) throws IOException {
         List<String> lines = new ArrayList<>();
         for (Task t : tasks) {
