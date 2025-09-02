@@ -67,21 +67,21 @@ public class Storage {
 
         Task t;
         switch (type) {
-            case "T":
-                t = new ToDo(desc);
-                break;
-            case "D":
-                String byIso = parts.length >= 4 ? parts[3] : "";
-                LocalDate byDate = byIso.isEmpty() ? LocalDate.now() : LocalDate.parse(byIso);
-                t = new Deadline(desc, byDate);
-                break;
-            case "E":
-                String from = parts.length >= 4 ? parts[3] : "";
-                String to = parts.length >= 5 ? parts[4] : "";
-                t = new Event(desc, from, to);
-                break;
-            default:
-                return null;
+        case "T":
+            t = new ToDo(desc);
+            break;
+        case "D":
+            String byIso = parts.length >= 4 ? parts[3] : "";
+            LocalDate byDate = byIso.isEmpty() ? LocalDate.now() : LocalDate.parse(byIso);
+            t = new Deadline(desc, byDate);
+            break;
+        case "E":
+            String from = parts.length >= 4 ? parts[3] : "";
+            String to = parts.length >= 5 ? parts[4] : "";
+            t = new Event(desc, from, to);
+            break;
+        default:
+            return null;
         }
         if (done) t.markAsDone();
         return t;
