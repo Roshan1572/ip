@@ -19,6 +19,7 @@ public class Storage {
 
     public Storage(String fileName) {
         // Robust: if tests run from text-ui-test/, resolve to project root
+        assert fileName != null && !fileName.isBlank() : "fileName must not be blank";
         Path base = Paths.get(System.getProperty("user.dir"));
         if (base.getFileName() != null && base.getFileName().toString().equals("text-ui-test")) {
             base = base.getParent(); // project root
@@ -37,9 +38,13 @@ public class Storage {
         List<Task> tasks = new ArrayList<>();
         for (String line : lines) {
             line = line.trim();
-            if (line.isEmpty()) continue;
+            if (line.isEmpty()) {
+                continue;
+            }
             Task t = parseLine(line);
-            if (t != null) tasks.add(t);
+            if (t != null) {
+                tasks.add(t);
+            }
         }
         return tasks;
     }
@@ -59,8 +64,11 @@ public class Storage {
         // T | 1 | description
         // D | 0 | description | by
         // E | 1 | description | from | to
+        assert line != null : "Line must not be null";
         String[] parts = line.split("\\s*\\|\\s*");
-        if (parts.length < 3) return null;
+        if (parts.length < 3) {
+            return null;
+        }
         String type = parts[0];
         boolean done = "1".equals(parts[1]);
         String desc = parts[2];
@@ -83,11 +91,14 @@ public class Storage {
         default:
             return null;
         }
-        if (done) t.markAsDone();
+        if (done) {
+            t.markAsDone();
+        }
         return t;
     }
 
     private String serialize(Task t) {
+        assert t != null : "Cannot serialize null task";
         String done = t.isDone ? "1" : "0";
         if (t instanceof ToDo) {
             return String.join(" | ", "T", done, t.description);
