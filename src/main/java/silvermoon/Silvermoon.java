@@ -32,7 +32,9 @@ public class Silvermoon {
             String input = sc.nextLine();
             try {
                 boolean shouldExit = Parser.parseAndExecute(input, tasks, ui, storage);
-                if (shouldExit) break;
+                if (shouldExit) {
+                    break;
+                }
             } catch (SilvermoonException e) {
                 ui.showError(e.getMessage());
             }
