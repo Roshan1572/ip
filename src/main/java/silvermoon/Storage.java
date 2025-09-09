@@ -18,6 +18,7 @@ public class Storage {
     private final Path dataFile;
 
     public Storage(String fileName) {
+        assert fileName != null && !fileName.isBlank() : "fileName must not be blank";
         // Robust: if tests run from text-ui-test/, resolve to project root
         assert fileName != null && !fileName.isBlank() : "fileName must not be blank";
         Path base = Paths.get(System.getProperty("user.dir"));
