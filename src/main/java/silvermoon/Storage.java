@@ -18,6 +18,7 @@ public class Storage {
     private final Path dataFile;
 
     public Storage(String fileName) {
+        assert fileName != null && !fileName.isBlank() : "fileName must not be blank";
         // Robust: if tests run from text-ui-test/, resolve to project root
         Path base = Paths.get(System.getProperty("user.dir"));
         if (base.getFileName() != null && base.getFileName().toString().equals("text-ui-test")) {
@@ -59,6 +60,7 @@ public class Storage {
         // T | 1 | description
         // D | 0 | description | by
         // E | 1 | description | from | to
+        assert line != null : "Line must not be null";
         String[] parts = line.split("\\s*\\|\\s*");
         if (parts.length < 3) return null;
         String type = parts[0];
@@ -88,6 +90,7 @@ public class Storage {
     }
 
     private String serialize(Task t) {
+        assert t != null : "Cannot serialize null task";
         String done = t.isDone ? "1" : "0";
         if (t instanceof ToDo) {
             return String.join(" | ", "T", done, t.description);

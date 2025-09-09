@@ -5,6 +5,7 @@ public class Task {
     protected boolean isDone;
 
     public Task(String description) {
+        assert description != null && !description.isBlank() : "Task description must be non-empty";
         this.description = description;
         this.isDone = false;
     }

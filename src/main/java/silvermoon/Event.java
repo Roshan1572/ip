@@ -9,6 +9,8 @@ public class Event extends Task {
 
     public Event(String description, String from, String to) {
         super(description);
+        assert from != null && !from.isBlank() : "Event 'from' must be non-empty";
+        assert to != null && !to.isBlank()     : "Event 'to' must be non-empty";
         this.from = from;
         this.to = to;
     }
