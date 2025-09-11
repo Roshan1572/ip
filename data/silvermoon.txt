@@ -2,3 +2,8 @@ T | 0 | read book
 D | 0 | return book | 2019-12-02
 D | 1 | return book | 2019-12-02
 E | 0 | project | Mon 2pm | 4pm
+F | 1 | play games | 2hrs
+D | 0 | return book | 2019-12-02
+F | 1 | play games | 2hrs
+D | 0 | assign | 2025-10-14
+F | 0 | gaming | 6h
