@@ -20,7 +20,6 @@ public class Storage {
     public Storage(String fileName) {
         assert fileName != null && !fileName.isBlank() : "fileName must not be blank";
         // Robust: if tests run from text-ui-test/, resolve to project root
-        assert fileName != null && !fileName.isBlank() : "fileName must not be blank";
         Path base = Paths.get(System.getProperty("user.dir"));
         if (base.getFileName() != null && base.getFileName().toString().equals("text-ui-test")) {
             base = base.getParent(); // project root
@@ -89,6 +88,14 @@ public class Storage {
             String to = parts.length >= 5 ? parts[4] : "";
             t = new Event(desc, from, to);
             break;
+        case "F": {
+            if (parts.length < 4) {
+                return null;
+            }
+            String duration = parts[3];
+            t = new FixedDuration(desc, duration);
+            break;
+        }
         default:
             return null;
         }
@@ -109,6 +116,9 @@ public class Storage {
         } else if (t instanceof Event) {
             Event e = (Event) t;
             return String.join(" | ", "E", done, e.description, e.from, e.to);
+        } else if (t instanceof FixedDuration) {
+            FixedDuration f = (FixedDuration) t;
+            return String.join(" | ", "F", (f.isDone ? "1" : "0"), f.description, f.getDuration());
         } else {
             // fallback
             return String.join(" | ", "T", done, t.description);
