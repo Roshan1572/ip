@@ -8,14 +8,14 @@ public class Ui {
 
     public void showGreeting(String name) {
         System.out.println(LINE);
-        System.out.println(" Hello! I'm " + name);
-        System.out.println(" What can I do for you?");
+        System.out.println("Anar'alah belore! I'm " + name);
+        System.out.println("How may I assist you?");
         System.out.println(LINE);
     }
 
     public void showExit() {
         System.out.println(LINE);
-        System.out.println(" Bye. Hope to see you again soon!");
+        System.out.println("Band'or shorel'aran, farewell champion.");
         System.out.println(LINE);
     }
 
@@ -35,32 +35,32 @@ public class Ui {
 
     public void showTaskAdded(Task t, int count) {
         System.out.println(LINE);
-        System.out.println(" Got it. I've added this task:");
+        System.out.println("I've added this quest, adventurer:");
         System.out.println("   " + t);
-        System.out.println(" Now you have " + count + " task" + (count == 1 ? "" : "s") + " in the list.");
+        System.out.println(" Now you have " + count + " quest" + (count == 1 ? "" : "s") + " in the log.");
         System.out.println(LINE);
     }
 
     public void showTaskRemoved(Task t, int count) {
         System.out.println(LINE);
-        System.out.println(" Noted. I've removed this task:");
+        System.out.println(" Noted. I've removed this quest, adventurer:");
         System.out.println("   " + t);
-        System.out.println(" Now you have " + count + " task" + (count == 1 ? "" : "s") + " in the list.");
+        System.out.println(" Now you have " + count + " quest" + (count == 1 ? "" : "s") + " in the log.");
         System.out.println(LINE);
     }
 
     public void showTaskMarked(Task t, boolean done) {
         System.out.println(LINE);
         System.out.println(done
-                ? " Nice! I've marked this task as done:"
-                : " OK, I've marked this task as not done yet:");
+                ? " Anar'alah! Marked as done:"
+                : " OK, I've marked this quest as not done yet:");
         System.out.println("   " + t);
         System.out.println(LINE);
     }
 
     public void showTaskList(List<Task> tasks) {
         System.out.println(LINE);
-        System.out.println(" Here are the tasks in your list:");
+        System.out.println(" Here are the quests in your log:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(" " + (i + 1) + ". " + tasks.get(i));
         }
@@ -69,7 +69,7 @@ public class Ui {
 
     public void showMatchingTasks(java.util.List<Task> tasks) {
         System.out.println("____________________________________________________________");
-        System.out.println(" Here are the matching tasks in your list:");
+        System.out.println(" Here are the matching quests in your log:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(" " + (i + 1) + ". " + tasks.get(i));
         }

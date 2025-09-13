@@ -16,12 +16,12 @@ public class FxUi extends Ui {
 
     @Override
     public void showGreeting(String name) {
-        out.accept("Hello! I'm " + name + "\nWhat can I do for you?");
+        out.accept("Anar'alah belore! I'm " + name + "\nHow may I assist you?");
     }
 
     @Override
     public void showExit() {
-        out.accept("Bye. Hope to see you again soon!");
+        out.accept("Band'or shorel'aran, farewell champion.");
     }
 
     @Override
@@ -36,24 +36,24 @@ public class FxUi extends Ui {
 
     @Override
     public void showTaskAdded(Task t, int count) {
-        out.accept("Got it. I've added this task:\n  " + t
-                + "\nNow you have " + count + " task" + (count == 1 ? "" : "s") + ".");
+        out.accept("I've added this quest, adventurer:\n  " + t
+                + "\nNow you have " + count + " quest" + (count == 1 ? "" : "s") + ".");
     }
 
     @Override
     public void showTaskRemoved(Task t, int count) {
-        out.accept("Noted. I've removed this task:\n  " + t
-                + "\nNow you have " + count + " task" + (count == 1 ? "" : "s") + ".");
+        out.accept("Noted. I've removed this quest:\n  " + t
+                + "\nNow you have " + count + " quest" + (count == 1 ? "" : "s") + ".");
     }
 
     @Override
     public void showTaskMarked(Task t, boolean done) {
-        out.accept((done ? "Nice! Marked as done:\n  " : "OK, marked as not done:\n  ") + t);
+        out.accept((done ? "Anar'alah! Marked as done:\n  " : "OK, marked as not done:\n  ") + t);
     }
 
     @Override
     public void showTaskList(List<Task> tasks) {
-        StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
+        StringBuilder sb = new StringBuilder("Here are the quests in your log:\n");
         for (int i = 0; i < tasks.size(); i++) {
             sb.append(" ").append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
@@ -61,7 +61,7 @@ public class FxUi extends Ui {
     }
     @Override
     public void showMatchingTasks(java.util.List<Task> tasks) {
-        StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+        StringBuilder sb = new StringBuilder("Here are the matching quests in your log:\n");
         for (int i = 0; i < tasks.size(); i++) {
             sb.append(" ").append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
