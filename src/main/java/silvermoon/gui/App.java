@@ -48,6 +48,7 @@ public class App extends Application {
         HBox.setHgrow(input, javafx.scene.layout.Priority.ALWAYS);
 
         BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: #e695d9;");
         root.setCenter(scrollPane);
         root.setBottom(bar);
 
@@ -103,3 +104,4 @@ public class App extends Application {
         }
     }
 }
+

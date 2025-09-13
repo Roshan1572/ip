@@ -19,8 +19,12 @@ public class DialogBox extends HBox {
         text.setWrapText(true);
         text.setMaxWidth(360);
         text.setPadding(new Insets(8, 12, 8, 12));
-        text.setStyle("-fx-background-color:" + (isUser ? "#e3f2fd" : "#f1f8e9")
-                + "; -fx-background-radius: 12; -fx-font-size: 13px;");
+        text.setStyle(
+                "-fx-background-color:" + (isUser ? "#1aede3" : "#e09665") + ";" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-text-fill: #111111;"
+        );
 
         // Avatar
         displayPicture.setImage(avatar);
