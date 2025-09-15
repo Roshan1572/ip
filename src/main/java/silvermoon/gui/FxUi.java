@@ -42,7 +42,7 @@ public class FxUi extends Ui {
 
     @Override
     public void showTaskRemoved(Task t, int count) {
-        out.accept("Noted. I've removed this quest:\n  " + t
+        out.accept("Noted. I've removed this quest, adventurer:\n  " + t
                 + "\nNow you have " + count + " quest" + (count == 1 ? "" : "s") + ".");
     }
 
