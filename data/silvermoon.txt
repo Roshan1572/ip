@@ -1,8 +1,4 @@
-T | 0 | read book
-D | 0 | return book | 2019-12-02
-D | 1 | return book | 2019-12-02
-F | 1 | play games | 2hrs
-D | 0 | return book | 2019-12-02
-F | 0 | gaming | 6h
-E | 0 | party | 3pm | 5pm
-F | 0 | kill dragons | 5h
+T | 0 | read notes
+D | 0 | assignment | 2025-09-19
+E | 0 | midterm | 6pm | 7pm
+F | 0 | note revision | 2hrs

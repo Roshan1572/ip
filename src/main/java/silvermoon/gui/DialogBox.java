@@ -20,7 +20,7 @@ public class DialogBox extends HBox {
         text.setMaxWidth(360);
         text.setPadding(new Insets(8, 12, 8, 12));
         text.setStyle(
-                "-fx-background-color:" + (isUser ? "#1aede3" : "#e09665") + ";" +
+                "-fx-background-color:" + (isUser ? "#e695d9" : "#93e0fa") + ";" +
                         "-fx-background-radius: 12;" +
                         "-fx-font-size: 13px;" +
                         "-fx-text-fill: #111111;"
@@ -54,3 +54,5 @@ public class DialogBox extends HBox {
         return new DialogBox(message, avatar, false);
     }
 }
+
+
